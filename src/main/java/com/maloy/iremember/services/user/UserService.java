@@ -1,6 +1,6 @@
-package com.maloy.iremember.services;
+package com.maloy.iremember.services.user;
 
-import com.maloy.iremember.repositories.UserRepository;
+import com.maloy.iremember.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

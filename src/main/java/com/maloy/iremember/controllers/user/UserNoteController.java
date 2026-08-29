@@ -1,8 +1,8 @@
-package com.maloy.iremember.controllers;
+package com.maloy.iremember.controllers.user;
 
 import com.maloy.iremember.dto.clientNote.ClientNoteResponse;
 import com.maloy.iremember.security.CustomUserDetails;
-import com.maloy.iremember.services.ClientNoteService;
+import com.maloy.iremember.services.client.ClientNoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

@@ -1,7 +1,7 @@
 package com.maloy.iremember.dto.client;
 
-import com.maloy.iremember.entity.Client;
-import com.maloy.iremember.enums.ClientStatus;
+import com.maloy.iremember.entity.client.Client;
+import com.maloy.iremember.enums.client.ClientStatus;
 
 public record ClientResponse(
         String email,

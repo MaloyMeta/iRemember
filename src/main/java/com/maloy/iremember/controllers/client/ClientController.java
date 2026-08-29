@@ -1,12 +1,12 @@
-package com.maloy.iremember.controllers;
+package com.maloy.iremember.controllers.client;
 
 import com.maloy.iremember.dto.client.ClientRequest;
 import com.maloy.iremember.dto.client.ClientResponse;
 import com.maloy.iremember.dto.client.ClientUpdateRequest;
-import com.maloy.iremember.entity.Company;
-import com.maloy.iremember.entity.User;
+import com.maloy.iremember.entity.user.Company;
+import com.maloy.iremember.entity.user.User;
 import com.maloy.iremember.security.CustomUserDetails;
-import com.maloy.iremember.services.ClientService;
+import com.maloy.iremember.services.client.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

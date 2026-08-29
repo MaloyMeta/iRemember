@@ -1,8 +1,8 @@
-package com.maloy.iremember.repositories;
+package com.maloy.iremember.repositories.client;
 
-import com.maloy.iremember.entity.Client;
-import com.maloy.iremember.entity.ClientNote;
-import com.maloy.iremember.entity.User;
+import com.maloy.iremember.entity.client.Client;
+import com.maloy.iremember.entity.client.ClientNote;
+import com.maloy.iremember.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

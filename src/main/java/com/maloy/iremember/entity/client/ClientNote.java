@@ -1,5 +1,6 @@
-package com.maloy.iremember.entity;
+package com.maloy.iremember.entity.client;
 
+import com.maloy.iremember.entity.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

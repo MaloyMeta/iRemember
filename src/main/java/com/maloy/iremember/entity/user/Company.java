@@ -1,5 +1,7 @@
-package com.maloy.iremember.entity;
+package com.maloy.iremember.entity.user;
 
+import com.maloy.iremember.entity.client.Client;
+import com.maloy.iremember.entity.finance.Transaction;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -36,4 +38,7 @@ public class Company {
 
     @OneToMany(mappedBy = "company")
     List<Client> clients = new ArrayList<>();
+
+    @OneToMany(mappedBy = "company")
+    private List<Transaction> transactions = new ArrayList<>();;
 }

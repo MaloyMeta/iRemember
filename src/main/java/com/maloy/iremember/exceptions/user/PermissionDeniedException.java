@@ -1,4 +1,4 @@
-package com.maloy.iremember.exceptions;
+package com.maloy.iremember.exceptions.user;
 
 public class PermissionDeniedException extends RuntimeException {
     public PermissionDeniedException(String message) {

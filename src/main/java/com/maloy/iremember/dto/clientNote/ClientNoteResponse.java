@@ -1,6 +1,6 @@
 package com.maloy.iremember.dto.clientNote;
 
-import com.maloy.iremember.entity.ClientNote;
+import com.maloy.iremember.entity.client.ClientNote;
 
 public record ClientNoteResponse(
         String text,

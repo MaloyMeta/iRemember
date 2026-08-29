@@ -1,4 +1,4 @@
-package com.maloy.iremember.exceptions;
+package com.maloy.iremember.exceptions.client;
 
 public class ClientNotFoundException extends RuntimeException {
     public ClientNotFoundException(String message) {

@@ -1,14 +1,14 @@
-package com.maloy.iremember.controllers;
+package com.maloy.iremember.controllers.auth;
 
 import com.maloy.iremember.dto.auth.AuthenticationResponse;
 import com.maloy.iremember.dto.auth.LoginUserRequest;
 import com.maloy.iremember.dto.auth.registerCompanyRequest;
 import com.maloy.iremember.dto.auth.registerUserRequest;
-import com.maloy.iremember.entity.Company;
-import com.maloy.iremember.entity.User;
-import com.maloy.iremember.enums.UserRole;
-import com.maloy.iremember.repositories.CompanyRepository;
-import com.maloy.iremember.repositories.UserRepository;
+import com.maloy.iremember.entity.user.Company;
+import com.maloy.iremember.entity.user.User;
+import com.maloy.iremember.enums.user.UserRole;
+import com.maloy.iremember.repositories.user.CompanyRepository;
+import com.maloy.iremember.repositories.user.UserRepository;
 import com.maloy.iremember.security.CustomUserDetails;
 import com.maloy.iremember.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;

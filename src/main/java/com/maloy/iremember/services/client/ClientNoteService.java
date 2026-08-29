@@ -1,15 +1,18 @@
-package com.maloy.iremember.services;
+package com.maloy.iremember.services.client;
 
 import com.maloy.iremember.dto.clientNote.ClientNoteRequest;
 import com.maloy.iremember.dto.clientNote.ClientNoteResponse;
-import com.maloy.iremember.entity.Client;
-import com.maloy.iremember.entity.ClientNote;
-import com.maloy.iremember.entity.User;
-import com.maloy.iremember.enums.UserRole;
-import com.maloy.iremember.exceptions.*;
-import com.maloy.iremember.repositories.ClientNoteRepository;
-import com.maloy.iremember.repositories.ClientRepository;
-import com.maloy.iremember.repositories.UserRepository;
+import com.maloy.iremember.entity.client.Client;
+import com.maloy.iremember.entity.client.ClientNote;
+import com.maloy.iremember.entity.user.User;
+import com.maloy.iremember.enums.user.UserRole;
+import com.maloy.iremember.exceptions.client.ClientNotFoundException;
+import com.maloy.iremember.exceptions.client.ClientNoteAlreadyExistsException;
+import com.maloy.iremember.exceptions.client.ClientNoteNotFoundException;
+import com.maloy.iremember.exceptions.user.PermissionDeniedException;
+import com.maloy.iremember.repositories.client.ClientNoteRepository;
+import com.maloy.iremember.repositories.client.ClientRepository;
+import com.maloy.iremember.repositories.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

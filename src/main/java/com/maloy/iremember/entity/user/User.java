@@ -1,7 +1,10 @@
-package com.maloy.iremember.entity;
+package com.maloy.iremember.entity.user;
 
 
-import com.maloy.iremember.enums.UserRole;
+import com.maloy.iremember.entity.client.Client;
+import com.maloy.iremember.entity.client.ClientNote;
+import com.maloy.iremember.entity.finance.Transaction;
+import com.maloy.iremember.enums.user.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -59,4 +62,7 @@ public class User {
 
     @OneToMany(mappedBy = "ownerNote")
     private List<ClientNote> clientNotes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Transaction> transactions = new ArrayList<>();
 }

@@ -1,6 +1,6 @@
 package com.maloy.iremember.dto.client;
 
-import com.maloy.iremember.enums.ClientStatus;
+import com.maloy.iremember.enums.client.ClientStatus;
 
 public record ClientUpdateRequest(
         String email,

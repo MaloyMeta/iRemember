@@ -1,9 +1,8 @@
 package com.maloy.iremember.security;
 
-import com.maloy.iremember.entity.User;
-import com.maloy.iremember.repositories.UserRepository;
+import com.maloy.iremember.entity.user.User;
+import com.maloy.iremember.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

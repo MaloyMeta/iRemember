@@ -1,4 +1,4 @@
-package com.maloy.iremember.exceptions;
+package com.maloy.iremember.exceptions.user;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {

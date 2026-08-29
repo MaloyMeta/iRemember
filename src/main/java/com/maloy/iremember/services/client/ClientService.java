@@ -1,16 +1,16 @@
-package com.maloy.iremember.services;
+package com.maloy.iremember.services.client;
 
 import com.maloy.iremember.dto.client.ClientRequest;
 import com.maloy.iremember.dto.client.ClientResponse;
 import com.maloy.iremember.dto.client.ClientUpdateRequest;
-import com.maloy.iremember.entity.Client;
-import com.maloy.iremember.entity.Company;
-import com.maloy.iremember.entity.User;
-import com.maloy.iremember.enums.ClientStatus;
-import com.maloy.iremember.exceptions.ClientNotFoundException;
-import com.maloy.iremember.exceptions.UserNotFoundException;
-import com.maloy.iremember.repositories.ClientRepository;
-import com.maloy.iremember.repositories.UserRepository;
+import com.maloy.iremember.entity.client.Client;
+import com.maloy.iremember.entity.user.Company;
+import com.maloy.iremember.entity.user.User;
+import com.maloy.iremember.enums.client.ClientStatus;
+import com.maloy.iremember.exceptions.client.ClientNotFoundException;
+import com.maloy.iremember.exceptions.user.UserNotFoundException;
+import com.maloy.iremember.repositories.client.ClientRepository;
+import com.maloy.iremember.repositories.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

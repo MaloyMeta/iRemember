@@ -1,4 +1,4 @@
-package com.maloy.iremember.enums;
+package com.maloy.iremember.enums.client;
 
 public enum ClientStatus {
     NEW,

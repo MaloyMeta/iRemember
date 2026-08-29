@@ -1,9 +1,9 @@
-package com.maloy.iremember.controllers;
+package com.maloy.iremember.controllers.client;
 
 import com.maloy.iremember.dto.clientNote.ClientNoteRequest;
 import com.maloy.iremember.dto.clientNote.ClientNoteResponse;
 import com.maloy.iremember.security.CustomUserDetails;
-import com.maloy.iremember.services.ClientNoteService;
+import com.maloy.iremember.services.client.ClientNoteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

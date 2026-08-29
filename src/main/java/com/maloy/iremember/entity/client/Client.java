@@ -1,7 +1,9 @@
-package com.maloy.iremember.entity;
+package com.maloy.iremember.entity.client;
 
-import com.maloy.iremember.enums.ClientStatus;
-import com.maloy.iremember.enums.UserRole;
+import com.maloy.iremember.entity.finance.Transaction;
+import com.maloy.iremember.entity.user.Company;
+import com.maloy.iremember.entity.user.User;
+import com.maloy.iremember.enums.client.ClientStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -15,6 +17,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -65,4 +68,7 @@ public class Client {
 
     @OneToMany(mappedBy = "client")
     private List<ClientNote> clientNotes;
+
+    @OneToMany(mappedBy = "client")
+    private List<Transaction> transactions = new ArrayList<>();;
 }

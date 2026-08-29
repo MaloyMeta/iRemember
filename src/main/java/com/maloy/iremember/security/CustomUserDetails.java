@@ -1,6 +1,6 @@
 package com.maloy.iremember.security;
 
-import com.maloy.iremember.entity.User;
+import com.maloy.iremember.entity.user.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;

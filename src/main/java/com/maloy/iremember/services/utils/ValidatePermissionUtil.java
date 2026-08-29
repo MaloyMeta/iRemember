@@ -1,9 +1,9 @@
 package com.maloy.iremember.services.utils;
 
-import com.maloy.iremember.entity.Client;
-import com.maloy.iremember.entity.User;
-import com.maloy.iremember.enums.UserRole;
-import com.maloy.iremember.exceptions.PermissionDeniedException;
+import com.maloy.iremember.entity.client.Client;
+import com.maloy.iremember.entity.user.User;
+import com.maloy.iremember.enums.user.UserRole;
+import com.maloy.iremember.exceptions.user.PermissionDeniedException;
 import org.springframework.stereotype.Component;
 
 @Component

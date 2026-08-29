@@ -1,7 +1,7 @@
-package com.maloy.iremember.repositories;
+package com.maloy.iremember.repositories.client;
 
-import com.maloy.iremember.entity.Client;
-import com.maloy.iremember.entity.Company;
+import com.maloy.iremember.entity.client.Client;
+import com.maloy.iremember.entity.user.Company;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
