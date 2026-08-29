@@ -1,171 +1,184 @@
 # iRemember
 
-### A scalable CRM platform for managing companies, teams, clients and business operations.
+### CRM system for managing companies, employees, clients and business operations.
 
-**iRemember** is a business-oriented CRM platform built with **Java and Spring Boot**.
+**iRemember** is a backend-focused CRM application built with **Java and Spring Boot**.
 
-The project started as a personal backend project and is evolving into a full-featured CRM designed around a real-world business model: companies, employees, managers, clients, communication, financial tracking and operational workflows.
+The system is designed around a company-oriented architecture where users manage clients, communication, financial operations and other business processes within their company.
 
-The goal is not simply to build another CRUD application.
-
-The goal is to build a **maintainable, secure and extensible business system** that can grow from a small internal tool into a production-ready CRM platform.
-
-> 🚧 **Project Status: Active Development**
->
-> The backend is currently the primary focus. A dedicated frontend application is planned as the next major stage of development.
+The project focuses on building a realistic, maintainable backend rather than a simple CRUD application.
 
 ---
 
-## 🎯 Vision
+## 🧩 Core Concept
 
-Most small businesses eventually end up spreading their customer information across spreadsheets, messengers, notes, delivery services and separate financial tools.
-
-**iRemember aims to bring these workflows together.**
-
-The long-term vision is a centralized platform where a company can:
-
-- manage its employees and roles;
-- manage customers and their lifecycle;
-- assign clients to responsible employees;
-- track communication and comments;
-- organize tags and customer information;
-- monitor financial activity;
-- track deliveries;
-- connect delivery information with customers;
-- control access to company data;
-- and eventually automate repetitive business operations.
-
-The architecture is being designed with future expansion in mind rather than around a single use case.
-
----
-
-# ✨ Core Features
-
-## 👥 Company & User Management
-
-The system is designed around a company-based structure.
+The main domain structure is based on the relationship between companies, users and clients:
 
 ```text
 Company
    │
-   └── Users
+   ├── Users
+   │
+   └── Clients
+          │
+          ├── Comments
+          ├── Tags
+          ├── Transactions
+          └── Delivery information
+```
+
+Each company operates within its own isolated data scope.
+
+Users interact with the system according to their roles and permissions.
+
+---
+
+# 🔐 Security
+
+Security is implemented using **Spring Security**.
+
+The application uses authenticated users as the source of authorization context.
+
+Company ownership is taken from the currently authenticated user instead of being provided by the client.
+
+For example, financial and client operations use the authenticated user's company when accessing data:
+
+```text
+Authenticated User
         │
-        └── Clients
+        ↓
+     Company
+        │
+        ↓
+  Company-owned data
 ```
 
-A company can have multiple users with different responsibilities and access levels.
+This prevents users from simply providing another company's ID to access its data.
 
-This provides the foundation for a multi-user CRM rather than a simple personal customer list.
+Authorization is additionally applied to client operations according to the user's role and relationship with the client.
 
 ---
 
-## 🔐 Authentication & Authorization
+# 👥 Client Management
 
-Security is one of the core parts of the system.
+Clients are one of the main entities of the system.
 
-The project uses **Spring Security** with JWT-based authentication.
+The application supports operations such as:
 
-The authorization model is designed around user roles and ownership of business data.
+- creating clients;
+- updating clients;
+- deleting clients;
+- retrieving clients;
+- assigning clients to users;
+- managing client status;
+- managing client comments;
+- working with client tags;
+- pagination;
+- sorting;
+- permission-based access.
 
-Current role concept:
-
-```text
-ADMIN
-   │
-   ├── Full company access
-   │
-MANAGER
-   │
-   ├── Extended access within the company
-   │
-EMPLOYEE
-   │
-   └── Access to assigned / permitted clients
-```
-
-The authorization layer is being designed so that permissions can become more granular as the system grows.
+Client access is always considered in the context of the user's company.
 
 ---
 
-## 👤 Client Management
+# 💬 Client Information
 
-Clients are the central business entity of iRemember.
+The CRM stores information related to individual clients instead of keeping business context separated across different systems.
 
-The system is designed to support:
+A client can contain related:
 
-- client creation;
-- client updates;
-- client assignment;
-- client status management;
-- company ownership;
-- responsible manager/employee;
 - comments;
 - tags;
-- contact information;
-- future interaction history.
+- financial transactions;
+- assigned users;
+- delivery information;
+- business history.
 
-The permission model determines which users can modify particular clients.
+This allows different CRM modules to operate around the same client entity.
 
-For example:
+---
+
+# 💰 Finance
+
+The finance module is responsible for tracking financial transactions associated with clients and companies.
+
+Each transaction contains information about:
+
+- amount;
+- transaction type;
+- transaction status;
+- description;
+- creation date;
+- update date;
+- client;
+- company;
+- user who created the transaction.
+
+### Transaction types
 
 ```text
-ADMIN
-  ↓
-Can manage company clients
-
-MANAGER
-  ↓
-Can manage clients within permitted company scope
-
-EMPLOYEE
-  ↓
-Can manage assigned clients
-and available unassigned clients
+INCOME
+EXPENSE
 ```
 
----
+### Transaction operations
 
-# 💬 Client Communication
+The API supports:
 
-The CRM is designed to keep customer-related information attached directly to the client.
-
-Planned communication-related functionality includes:
-
-- comments;
-- internal notes;
-- interaction history;
-- tags;
-- important/urgent markers;
-- communication timeline.
-
-The idea is to prevent important customer information from becoming lost in external chats or personal notes.
+- creating transactions;
+- updating transactions;
+- deleting transactions;
+- retrieving company transactions;
+- retrieving client transactions;
+- retrieving a specific transaction;
+- pagination;
+- sorting.
 
 ---
 
-# 💰 Financial Management
+## 📊 Financial Statistics
 
-One of the planned CRM modules is financial tracking.
+The finance module also provides aggregated information for both clients and companies.
 
-The long-term goal is to allow businesses to associate financial information with their customers and operations.
+### Client summary
 
-Planned functionality includes:
+A client financial summary contains:
 
-- income tracking;
-- expense tracking;
-- transaction history;
-- client-related financial records;
-- financial summaries;
-- reporting.
+```text
+Client
+├── Balance
+├── Total Income
+├── Total Expense
+├── Transaction Count
+└── Last Transaction
+```
+
+### Company summary
+
+A company financial summary contains:
+
+```text
+Company
+├── Total Balance
+├── Total Income
+├── Total Expense
+├── Transaction Count
+├── Client Count
+├── Average Transaction Amount
+└── Last Transaction
+```
+
+Aggregated financial values are calculated directly through database queries instead of loading all transactions into application memory.
+
+Financial queries are scoped by company to maintain data isolation.
 
 ---
 
-# 🚚 Delivery Tracking
+# 🚚 Delivery
 
-iRemember is also planned to integrate delivery workflows.
+The CRM is designed to keep delivery information associated with the client.
 
-The concept is to associate a delivery/tracking number with a client and retrieve delivery information through an external delivery service API.
-
-Example workflow:
+The intended workflow is:
 
 ```text
 Client
@@ -175,202 +188,199 @@ Client
          └── Tracking Number
                 │
                 ↓
-          Delivery API
+          Delivery Service
                 │
                 ↓
-        Delivery Status
+          Delivery Status
 ```
 
-This allows customer-related delivery information to remain inside the CRM instead of requiring employees to manually switch between systems.
+This allows employees to access customer and delivery information from the same CRM context.
 
 ---
 
 # 🏗️ Architecture
 
-The backend follows a layered architecture designed to keep responsibilities separated.
+The application follows a layered architecture:
 
 ```text
-                    ┌─────────────────┐
-                    │    Frontend     │
-                    │   (Planned)     │
-                    └────────┬────────┘
-                             │
-                             ↓
-                    ┌─────────────────┐
-                    │   Controllers   │
-                    └────────┬────────┘
-                             │
-                             ↓
-                    ┌─────────────────┐
-                    │    Services     │
-                    └────────┬────────┘
-                             │
-                             ↓
-                    ┌─────────────────┐
-                    │  Repositories   │
-                    └────────┬────────┘
-                             │
-                             ↓
-                    ┌─────────────────┐
-                    │   PostgreSQL    │
-                    └─────────────────┘
+                    REST API
+                       │
+                       ↓
+                 Controllers
+                       │
+                       ↓
+                    Services
+                       │
+                       ↓
+                  Repositories
+                       │
+                       ↓
+                   PostgreSQL
 ```
 
-The application separates:
+The project separates:
 
-- HTTP/API concerns;
-- business logic;
-- persistence;
-- domain entities;
+- controllers;
+- services;
+- repositories;
+- entities;
+- DTOs;
 - security;
+- exceptions;
 - database migrations;
-- infrastructure configuration.
+- utility components.
 
-This separation makes it possible to evolve individual parts of the system without coupling the entire application together.
+Business logic is kept inside the service layer, while repositories are responsible for persistence and database queries.
 
 ---
 
 # 🗄️ Database
 
-The project uses **PostgreSQL** as its primary relational database.
+The application uses **PostgreSQL** as its relational database.
 
-Database schema evolution is handled through **Flyway migrations**.
+Database schema changes are managed through **Flyway** migrations.
 
-This allows database changes to be version-controlled together with the application code.
+The project uses **JPA / Hibernate** for persistence.
 
-```text
-Application
-     │
-     ↓
-Hibernate / JPA
-     │
-     ↓
-PostgreSQL
-     ↑
-     │
-   Flyway
-```
+The database contains relationships between the main business entities and uses foreign keys to maintain referential integrity.
 
-The database is currently designed around the core CRM domain:
-
-```text
-Company
-   │
-   └── Users
-         │
-         └── Clients
-                │
-                ├── Comments
-                ├── Tags
-                ├── Financial Data
-                └── Deliveries
-```
-
-The schema will evolve as new CRM modules are introduced.
+Financial queries also use database indexes for frequently accessed company and client transaction data.
 
 ---
 
-# 🐳 Docker
+# 📦 DTO Architecture
 
-The development database is containerized using Docker Compose.
+The API does not expose JPA entities directly.
 
-The repository contains the infrastructure configuration required to run PostgreSQL locally.
+Dedicated DTOs are used for API requests and responses.
 
-```bash
-docker compose up -d
+For example:
+
+```text
+TransactionRequest
+TransactionResponse
+
+ClientFinanceSummaryResponse
+CompanyFinanceSummaryResponse
+LastTransaction
 ```
 
-The application itself can then connect to the PostgreSQL container through the configured environment variables.
-
-Sensitive configuration such as:
-
-- database passwords;
-- JWT secrets;
-- environment-specific credentials;
-
-is intentionally kept outside the repository.
+This keeps the REST API independent from the internal persistence model and allows response structures to be designed specifically for frontend requirements.
 
 ---
 
-# 🛠️ Tech Stack
+# 📄 Pagination & Sorting
+
+Collection endpoints support pagination and sorting through Spring Data's `Pageable`.
+
+Example:
+
+```text
+GET /api/finance?page=0&size=20&sortBy=createdAt&direction=desc
+```
+
+This allows the frontend to request only the required portion of large datasets.
+
+---
+
+# 🔎 API Structure
+
+The REST API is organized around domain resources.
+
+Examples:
+
+```text
+/api/clients
+/api/finance
+/api/finance/{clientId}
+/api/finance/{clientId}/transaction/{transactionId}
+```
+
+Financial summary endpoints provide aggregated information for company and client dashboards.
+
+Example:
+
+```text
+GET /api/finance/summary
+GET /api/finance/{clientId}/summary
+```
+
+---
+
+# 🛠️ Technology Stack
 
 ### Backend
 
-- **Java**
-- **Spring Boot**
-- **Spring MVC**
-- **Spring Data JPA**
-- **Hibernate**
-- **Spring Security**
-- **JWT**
-- **Lombok**
+- Java
+- Spring Boot
+- Spring MVC
+- Spring Data JPA
+- Hibernate
+- Spring Security
+- JWT
+- Lombok
+- Jakarta Validation
 
 ### Database
 
-- **PostgreSQL**
-- **Flyway**
+- PostgreSQL
+- Flyway
 
 ### Infrastructure
 
-- **Docker**
-- **Docker Compose**
-- **Maven**
+- Docker
+- Docker Compose
 
-### Planned Frontend
+### Build & Development
 
-The backend is being developed independently from the frontend.
-
-A dedicated frontend application will be connected to the REST API once the backend domain and security layers are sufficiently mature.
+- Maven
+- IntelliJ IDEA
+- Git
+- GitHub
 
 ---
 
 # 📂 Project Structure
 
-The project is organized around clear application responsibilities.
-
 ```text
 src/
 └── main/
     ├── java/
-    │   └── com.maloy.iRemember/
+    │   └── com.maloy.iremember/
     │       ├── config/
-    │       ├── controller/
+    │       ├── controllers/
     │       ├── dto/
-    │       ├── exception/
+    │       ├── entity/
+    │       ├── enums/
+    │       ├── exceptions/
+    │       ├── repositories/
     │       ├── security/
-    │       ├── service/
-    │       ├── repository/
+    │       ├── services/
     │       └── ...
     │
     └── resources/
         ├── db/
         │   └── migration/
         └── application.properties
-
-compose.yaml
-pom.xml
 ```
-
-The structure will continue evolving as the CRM gains additional modules.
 
 ---
 
-# 🔑 Configuration
+# 🐳 Docker
 
-The application uses environment variables for sensitive configuration.
+PostgreSQL is configured to run in Docker for local development.
 
-Create a local `.env` file:
+Start the database with:
 
-```env
-POSTGRES_DB=iremember
-POSTGRES_USER=iremember
-POSTGRES_PASSWORD=your_password
-JWT_SECRET=your_jwt_secret
+```bash
+docker compose up -d
 ```
 
-The `.env` file is intentionally excluded from version control.
+Check running containers:
 
-For other developers, an `.env.example` file can be used as a configuration template.
+```bash
+docker ps
+```
 
 ---
 
@@ -378,286 +388,63 @@ For other developers, an `.env.example` file can be used as a configuration temp
 
 ## Requirements
 
-Before running the project, install:
-
 - Java 17+
 - Maven
 - Docker
 - Docker Compose
 - Git
 
----
-
-## 1. Clone the repository
+## Clone
 
 ```bash
 git clone https://github.com/MaloyMeta/iRemember.git
 cd iRemember
 ```
 
-## 2. Configure environment variables
-
-Create:
-
-```text
-.env
-```
-
-and configure:
-
-```env
-POSTGRES_DB=iremember
-POSTGRES_USER=iremember
-POSTGRES_PASSWORD=your_password
-JWT_SECRET=your_jwt_secret
-```
-
-## 3. Start PostgreSQL
+## Start PostgreSQL
 
 ```bash
 docker compose up -d
 ```
 
-Verify the container:
+## Run the application
 
-```bash
-docker ps
+Windows:
+
+```cmd
+mvnw.cmd spring-boot:run
 ```
 
-## 4. Start the application
-
-Using Maven:
+Linux / macOS:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Windows:
-
-```bash
-mvnw.cmd spring-boot:run
-```
-
-Flyway will apply the available database migrations during application startup.
+Flyway migrations are applied automatically when the application starts.
 
 ---
 
-# 🧪 Development Approach
+# 🧠 Engineering Approach
 
-The project is intentionally being developed incrementally.
+The project is developed with an emphasis on real-world backend engineering practices.
 
-Instead of implementing every CRM feature immediately, the development process focuses on establishing a stable foundation first:
+The main focus is on:
 
-```text
-Domain Model
-      ↓
-Database
-      ↓
-Persistence
-      ↓
-Business Logic
-      ↓
-Security
-      ↓
-REST API
-      ↓
-Frontend
-      ↓
-Integrations
-      ↓
-Automation
-```
+- clean separation of responsibilities;
+- secure access to company data;
+- relational database design;
+- transaction management;
+- DTO-based API design;
+- validation;
+- exception handling;
+- database migrations;
+- efficient database queries;
+- pagination;
+- authorization;
+- maintainable service architecture.
 
-This approach allows new functionality to be built on top of an established architecture instead of accumulating tightly coupled features.
-
----
-
-# 🗺️ Roadmap
-
-The roadmap represents the long-term direction of iRemember.
-
-## ✅ Completed
-
-- [x] Initial Spring Boot project
-- [x] PostgreSQL integration
-- [x] Docker Compose development environment
-- [x] Flyway database migrations
-- [x] Core company domain
-- [x] User domain
-- [x] Client domain
-- [x] Client comments
-- [x] Role-based access model
-- [x] Basic client authorization rules
-- [x] CRUD operations for core CRM entities
-- [x] JWT authentication foundation
-- [x] Environment-based configuration
-
----
-
-## 🚧 In Progress
-
-- [ ] Complete Spring Security implementation
-- [ ] Refine role-based authorization
-- [ ] Improve validation and exception handling
-- [ ] Expand client management
-- [ ] Improve API structure and DTOs
-- [ ] Expand database/domain model
-- [ ] Improve test coverage
-
----
-
-## 📋 Planned
-
-### Authentication & Security
-
-- [ ] User registration
-- [ ] Login flow
-- [ ] Refresh tokens
-- [ ] Password management
-- [ ] Account activation
-- [ ] Fine-grained permissions
-- [ ] Security auditing
-- [ ] Session/device management
-
-### CRM
-
-- [ ] Advanced client search
-- [ ] Filtering
-- [ ] Sorting
-- [ ] Pagination
-- [ ] Client activity timeline
-- [ ] Client tags
-- [ ] Client priorities
-- [ ] Client statuses
-- [ ] Client history
-- [ ] Bulk operations
-
-### Company Management
-
-- [ ] Company settings
-- [ ] Employee management
-- [ ] Role management
-- [ ] Permission management
-- [ ] Company-level configuration
-- [ ] Multi-tenant data isolation
-
-### Communication
-
-- [ ] Internal comments
-- [ ] Interaction history
-- [ ] Email integration
-- [ ] Communication timeline
-- [ ] Notifications
-- [ ] Reminders
-
-### Finance
-
-- [ ] Income tracking
-- [ ] Expense tracking
-- [ ] Client-related transactions
-- [ ] Financial reports
-- [ ] Revenue statistics
-- [ ] Monthly/annual summaries
-
-### Delivery
-
-- [ ] Delivery tracking
-- [ ] Tracking number management
-- [ ] Delivery status synchronization
-- [ ] External delivery API integration
-- [ ] Delivery history
-
-### Frontend
-
-- [ ] Dedicated frontend application
-- [ ] Authentication UI
-- [ ] Dashboard
-- [ ] Client management interface
-- [ ] Company management
-- [ ] Employee management
-- [ ] Finance dashboard
-- [ ] Delivery tracking interface
-- [ ] Responsive design
-- [ ] Role-based UI
-
----
-
-# 🚀 Future Vision
-
-The ultimate goal is to turn iRemember into a modular CRM platform rather than a collection of CRUD endpoints.
-
-A possible future architecture:
-
-```text
-                         iRemember
-                             │
-             ┌───────────────┼───────────────┐
-             │               │               │
-          CRM Core         Finance       Operations
-             │               │               │
-        ┌────┼────┐       ┌──┴──┐        ┌──┴─────┐
-        │    │    │       │     │        │        │
-     Clients Users Tags  Income Expenses Delivery Tasks
-        │
-        └──────────────┐
-                       │
-                  Communication
-                       │
-              ┌────────┼────────┐
-              │        │        │
-            Email    Notes   Notifications
-```
-
-As the project grows, additional infrastructure may be introduced:
-
-- Redis
-- message brokers
-- background jobs
-- scheduled tasks
-- external integrations
-- file storage
-- monitoring
-- logging
-- CI/CD
-- automated testing
-- cloud deployment
-
-The architecture will be evaluated continuously as complexity increases rather than introducing infrastructure without a concrete requirement.
-
----
-
-# 📊 Engineering Goals
-
-iRemember is also a learning and engineering project.
-
-The main goal is to gain practical experience with the problems that appear in real backend applications:
-
-- designing relational data models;
-- handling complex entity relationships;
-- implementing authorization rules;
-- maintaining database migrations;
-- designing service boundaries;
-- validating input;
-- handling application errors;
-- securing APIs;
-- managing configuration and secrets;
-- writing maintainable business logic;
-- testing business rules;
-- integrating external services;
-- containerizing infrastructure;
-- preparing an application for production.
-
-The project is therefore intentionally larger than a typical CRUD pet project.
-
----
-
-# 🧠 Why iRemember?
-
-The name **iRemember** represents the main idea behind the application:
-
-> **The CRM should remember the business, so people don't have to.**
-
-Customers, conversations, assignments, financial activity, deliveries, tasks and business history should live in one connected system.
+The system is intentionally being built as a realistic CRM backend rather than a minimal demonstration project.
 
 ---
 
@@ -665,22 +452,7 @@ Customers, conversations, assignments, financial activity, deliveries, tasks and
 
 **Maloy**
 
-Java Developer focused on backend development with Spring.
+Java Developer focused on backend development with Spring Boot.
 
-This project is being developed as a long-term engineering project and portfolio piece.
-
-### GitHub
-
-[github.com/MaloyMeta](https://github.com/MaloyMeta)
-
----
-
-# ⭐ Project Status
-
-**iRemember is actively evolving.**
-
-The current implementation represents the foundation of the platform.
-
-The frontend, additional CRM modules, integrations, automation and production infrastructure are part of the long-term roadmap.
-
-> **Built step by step. Designed to grow.**
+GitHub:  
+https://github.com/MaloyMeta
