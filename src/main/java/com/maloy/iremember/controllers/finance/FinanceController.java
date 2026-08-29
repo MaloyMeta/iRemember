@@ -1,5 +1,7 @@
 package com.maloy.iremember.controllers.finance;
 
+import com.maloy.iremember.dto.finance.ClientFinanceSummaryResponse;
+import com.maloy.iremember.dto.finance.CompanyFinanceSummaryResponse;
 import com.maloy.iremember.dto.finance.TransactionRequest;
 import com.maloy.iremember.dto.finance.TransactionResponse;
 import com.maloy.iremember.security.CustomUserDetails;
@@ -81,5 +83,42 @@ public class FinanceController {
     ){
         transactionService.deleteTransaction(currentUser,clientId,transactionId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<CompanyFinanceSummaryResponse> getFinanceStatsByCompany(
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ){
+        return ResponseEntity.ok(transactionService.getCompanyFinanceSummary(currentUser));
+    }
+
+    @GetMapping("/stats/{clientId}")
+    public ResponseEntity<ClientFinanceSummaryResponse> getFinanceStatsByClient(
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            @PathVariable Long clientId
+    ){
+        return ResponseEntity.ok(transactionService.getClientFinanceSummary(currentUser, clientId));
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<CompanyFinanceSummaryResponse> getCompanyFinanceSummary(
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
+        return ResponseEntity.ok(
+                transactionService.getCompanyFinanceSummary(currentUser)
+        );
+    }
+
+    @GetMapping("/{clientId}/summary")
+    public ResponseEntity<ClientFinanceSummaryResponse> getClientFinanceSummary(
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            @PathVariable Long clientId
+    ) {
+        return ResponseEntity.ok(
+                transactionService.getClientFinanceSummary(
+                        currentUser,
+                        clientId
+                )
+        );
     }
 }
