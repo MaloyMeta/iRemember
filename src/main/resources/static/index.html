@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>iRemember CRM</title>
+<style>
+:root{--bg:#f3f0ea;--sf:#fbfaf7;--ink:#2c3b3b;--mut:#7b8786;--ac:#4d8788;--ac2:#e1eeed;--bd:#e2ddd3;--ok:#4f8f68;--bad:#b4575a;--warn:#b8893f;--r:12px}
+@media(prefers-color-scheme:dark){:root{--bg:#1a2123;--sf:#222b2e;--ink:#dde5e3;--mut:#8d9b99;--ac:#7db4b1;--ac2:#2b3b3d;--bd:#33403f;--ok:#7fc096;--bad:#d98588;--warn:#d8ad68}}
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select,textarea{font:inherit;color:inherit}
+#app{display:flex;min-height:100vh}
+aside{width:220px;background:var(--sf);border-right:1px solid var(--bd);padding:20px 14px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.logo{font-weight:700;font-size:18px;padding:4px 10px 18px;color:var(--ac)}
+nav a{display:block;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--mut)}
+nav a:hover{background:var(--ac2)}nav a.on{background:var(--ac2);color:var(--ac);font-weight:600}
+.me{margin-top:auto;display:flex;flex-direction:column;gap:6px}.me small{color:var(--mut);padding:0 4px;overflow:hidden;text-overflow:ellipsis}
+main{flex:1;padding:28px 34px;max-width:1200px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:22px 0 10px}.sub{color:var(--mut);margin:0 0 20px}
+.bar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}.bar .sp{flex:1}
+.btn,.ghost{border:0;border-radius:8px;padding:8px 14px;cursor:pointer;background:var(--ac);color:#fff;font-weight:500}
+.btn:hover{filter:brightness(1.08)}.ghost{background:transparent;color:var(--ink);border:1px solid var(--bd)}.ghost:hover{background:var(--ac2)}
+.danger{color:var(--bad)}.sm{padding:4px 9px;font-size:13px}
+input,select,textarea{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--ac2);border-color:var(--ac)}
+.bar input,.bar select{width:auto}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.stat small{color:var(--mut);display:block}.stat b{font-size:24px}
+table{width:100%;border-collapse:collapse;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--bd)}th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);font-weight:600}
+th[data-s]{cursor:pointer}tr:last-child td{border:0}tbody tr.row{cursor:pointer}tbody tr.row:hover{background:var(--ac2)}
+.badge{padding:2px 9px;border-radius:99px;font-size:12px;background:var(--ac2);color:var(--ac);white-space:nowrap}
+.inc{color:var(--ok);font-weight:600}.exp{color:var(--bad);font-weight:600}
+.pager{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:14px;color:var(--mut)}
+.empty{padding:36px;text-align:center;color:var(--mut)}
+.note{border-left:3px solid var(--ac);padding:8px 12px;background:var(--bg);border-radius:6px;margin-bottom:8px}.note small{color:var(--mut)}
+.warn{background:var(--ac2);border:1px solid var(--warn);color:var(--ink);padding:10px 14px;border-radius:8px;margin-bottom:14px}
+#modal{position:fixed;inset:0;background:#0006;display:none;align-items:flex-start;justify-content:center;padding:5vh 16px;overflow:auto;z-index:5}
+#modal.on{display:flex}.mb{background:var(--sf);border-radius:16px;padding:24px;width:100%;max-width:620px;border:1px solid var(--bd)}
+.mb header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.mb h3{margin:0}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:12px}.f label{font-size:13px;color:var(--mut);display:block}.f .w{grid-column:1/-1}
+.acts{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,80px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;transition:.25s;z-index:9}
+#toast.show{transform:translate(-50%,0)}#toast.bad{background:var(--bad);color:#fff}
+.auth{margin:10vh auto;width:100%;max-width:400px}.auth .card{padding:26px}.auth .f{grid-template-columns:1fr}
+.tabs{display:flex;gap:6px;margin-bottom:14px}.tabs a{flex:1;text-align:center;padding:8px;border-radius:8px;cursor:pointer;color:var(--mut)}.tabs a.on{background:var(--ac2);color:var(--ac);font-weight:600}
+@media(max-width:760px){aside{display:none}main{padding:18px}.f{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app"></div><div id="modal"></div><div id="toast"></div>
+<script>
+const S={t:localStorage.getItem('t'),view:'dash',cp:0,cs:'id',cd:'asc',fp:0,q:''};
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>Number(n||0).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
+const dt=s=>s?new Date(s).toLocaleString('ru-RU',{dateStyle:'short',timeStyle:'short'}):'—';
+const CS={NEW:'Новый',LEAD:'Лид',NEGOTIATION:'Переговоры',ACTIVE:'Активный',ON_HOLD:'На паузе',COMPLETED:'Завершён',CANCELLED:'Отменён',ARCHIVED:'Архив'};
+const TS={PENDING:'В ожидании',COMPLETED:'Выполнено',CANCELLED:'Отменено'};
+const opts=(o,v)=>Object.entries(o).map(([k,l])=>`<option value="${k}" ${k==v?'selected':''}>${l}</option>`).join('');
+const jwt=()=>{try{return JSON.parse(atob(S.t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')))}catch{return null}};
+const me=()=>jwt()?.sub;
+
+function toast(m,bad){const e=$('#toast');e.textContent=m;e.className='show'+(bad?' bad':'');clearTimeout(toast.i);toast.i=setTimeout(()=>e.className='',3500)}
+async function api(p,{m='GET',b,noauth}={}){
+  const r=await fetch('/api'+p,{method:m,headers:{...(b?{'Content-Type':'application/json'}:{}),...(S.t&&!noauth?{Authorization:'Bearer '+S.t}:{})},body:b?JSON.stringify(b):undefined});
+  if(r.status===401){logout();throw Error('Сессия истекла, войдите снова')}
+  if(!r.ok){let msg=r.status===403?'Нет доступа (или истёк токен)':'Ошибка '+r.status;try{const j=await r.json();if(j.message)msg=j.message}catch{}throw Error(msg)}
+  return r.status===204?null:r.json();
+}
+const run=async f=>{try{await f()}catch(e){toast(e.message,1)}};
+function logout(){S.t=null;localStorage.removeItem('t');boot()}
+function login(t){S.t=t;localStorage.setItem('t',t);S.view='dash';boot()}
+
+/* ---------- modal ---------- */
+function modal(title,body){$('#modal').innerHTML=`<div class="mb"><header><h3>${esc(title)}</h3><button class="ghost sm" id="x">✕</button></header>${body}</div>`;$('#modal').classList.add('on');$('#x').onclick=closeM}
+function closeM(){$('#modal').classList.remove('on')}
+$('#modal').onclick=e=>{if(e.target.id==='modal')closeM()};
+const fd=f=>Object.fromEntries(new FormData(f));
+
+/* ---------- auth ---------- */
+function authScreen(tab='in'){
+  $('#app').innerHTML=`<div class="auth"><div class="logo" style="text-align:center;font-size:26px">◐ iRemember</div><div class="card">
+  <div class="tabs"><a data-t="in" class="${tab=='in'?'on':''}">Вход</a><a data-t="reg" class="${tab=='reg'?'on':''}">Новая компания</a></div>
+  <form id="af" class="f">${tab=='in'?`
+   <div><label>Email</label><input name="email" type="email" required></div>
+   <div><label>Пароль</label><input name="password" type="password" required></div>`:`
+   <div><label>Название компании</label><input name="companyName" required></div>
+   <div><label>Email компании (он же логин админа)</label><input name="companyEmail" type="email" required></div>
+   <div><label>Username</label><input name="username" required></div>
+   <div><label>Имя</label><input name="firstName" required></div>
+   <div><label>Фамилия</label><input name="lastName" required></div>
+   <div><label>Пароль</label><input name="password" type="password" required></div>`}
+   <button class="btn">${tab=='in'?'Войти':'Создать компанию'}</button></form></div></div>`;
+  document.querySelectorAll('.tabs a').forEach(a=>a.onclick=()=>authScreen(a.dataset.t));
+  $('#af').onsubmit=e=>{e.preventDefault();run(async()=>{const r=await api(tab=='in'?'/auth/login':'/auth/register-company',{m:'POST',b:fd(e.target),noauth:1});login(r.token)})};
+}
+
+/* ---------- shell ---------- */
+function shell(){
+  const nav=[['dash','Обзор'],['clients','Клиенты'],['fin','Финансы'],['notes','Мои заметки']];
+  $('#app').innerHTML=`<aside><div class="logo">◐ iRemember</div><nav>${nav.map(([k,l])=>`<a data-v="${k}" class="${S.view==k?'on':''}">${l}</a>`).join('')}</nav>
+  <div class="me"><small>${esc(me())}</small><button class="ghost" id="au">+ Сотрудник</button><button class="ghost" id="out">Выйти</button></div></aside><main id="main"></main>`;
+  document.querySelectorAll('nav a').forEach(a=>a.onclick=()=>{S.view=a.dataset.v;shell();render()});
+  $('#out').onclick=logout;$('#au').onclick=addUser;
+}
+const render=()=>run(()=>({dash,clients,fin,notes})[S.view]());
+function boot(){const j=jwt();if(!S.t||!j||j.exp*1000<Date.now()){S.t=null;localStorage.removeItem('t');return authScreen()}shell();render()}
+
+function addUser(){
+  modal('Новый сотрудник',`<form class="f" id="uf"><div><label>Имя</label><input name="firstName" required></div><div><label>Фамилия</label><input name="lastName" required></div>
+  <div><label>Username</label><input name="username" required></div><div><label>Email</label><input name="email" type="email" required></div>
+  <div class="w"><label>Пароль</label><input name="password" type="password" required></div>
+  <div class="w acts"><button type="button" class="ghost" onclick="closeM()">Отмена</button><button class="btn">Создать</button></div></form>
+  <p class="sub">Доступно только роли ADMIN. Сотрудник получит роль EMPLOYEE.</p>`);
+  $('#uf').onsubmit=e=>{e.preventDefault();run(async()=>{await api('/auth/register-user',{m:'POST',b:fd(e.target)});closeM();toast('Сотрудник создан')})};
+}
+
+/* ---------- dashboard ---------- */
+async function dash(){
+  const s=await api('/finance/stats'),l=s.lastTransaction;
+  $('#main').innerHTML=`<h1>Обзор</h1><p class="sub">Финансы и клиенты вашей компании</p>
+  <div class="grid">${[['Баланс',money(s.totalBalance)],['Доходы',money(s.totalIncome)],['Расходы',money(s.totalExpense)],['Клиентов',s.clientCount],['Операций',s.transactionCount],['Средняя операция',money(s.averageTransactionAmount)]]
+   .map(([a,b])=>`<div class="card stat"><small>${a}</small><b>${b}</b></div>`).join('')}</div>
+  <h2>Последняя операция</h2><div class="card">${l?`<span class="${l.type=='INCOME'?'inc':'exp'}">${l.type=='INCOME'?'+':'−'}${money(l.amount)}</span> · ${TS[l.status]} · клиент #${l.clientId} · ${dt(l.createdAt)}`:'<span class="sub">Операций пока нет</span>'}</div>`;
+}
+
+/* ---------- clients ---------- */
+async function clients(){
+  const d=await api(`/clients?page=${S.cp}&size=10&sortBy=${S.cs}&direction=${S.cd}`);
+  const rows=d.content.filter(c=>JSON.stringify(c).toLowerCase().includes(S.q.toLowerCase()));
+  const noId=d.content.length&&d.content[0].id===undefined;
+  const th=(k,l)=>`<th data-s="${k}">${l}${S.cs==k?(S.cd=='asc'?' ▲':' ▼'):''}</th>`;
+  $('#main').innerHTML=`<div class="bar"><div><h1>Клиенты</h1></div><div class="sp"></div><input id="q" placeholder="Поиск на странице…" value="${esc(S.q)}"><button class="btn" id="nc">+ Клиент</button></div>
+  ${noId?'<div class="warn">В <b>ClientResponse</b> нет поля <b>id</b> — без него нельзя открыть карточку, заметки и финансы клиента. См. список правок бэка.</div>':''}
+  <table><thead><tr>${th('firstName','Имя')}${th('lastName','Фамилия')}${th('email','Email')}<th>Телефон</th>${th('status','Статус')}<th>Менеджер</th></tr></thead><tbody>
+  ${rows.map((c,i)=>`<tr class="row" data-i="${i}"><td>${esc(c.firstName)}</td><td>${esc(c.lastName)}</td><td>${esc(c.email)}</td><td>${esc(c.phone)}</td><td><span class="badge">${CS[c.status]||esc(c.status)}</span></td><td>${esc(c.emailLinkedManager)}</td></tr>`).join('')||`<tr><td colspan=6 class="empty">Клиентов нет</td></tr>`}</tbody></table>
+  ${pager(d,'cp')}`;
+  $('#q').oninput=e=>{S.q=e.target.value;clients().then(()=>{const q=$('#q');q.focus();q.setSelectionRange(99,99)})};
+  $('#nc').onclick=newClient;
+  document.querySelectorAll('th[data-s]').forEach(t=>t.onclick=()=>{S.cd=S.cs==t.dataset.s&&S.cd=='asc'?'desc':'asc';S.cs=t.dataset.s;render()});
+  document.querySelectorAll('tr.row').forEach(r=>r.onclick=()=>clientCard(rows[r.dataset.i]));
+  bindPager('cp');
+}
+function pager(d,k){return `<div class="pager"><button class="ghost sm" data-p="-1" ${d.first?'disabled':''}>←</button><span>стр. ${d.number+1} из ${Math.max(d.totalPages,1)} · всего ${d.totalElements}</span><button class="ghost sm" data-p="1" ${d.last?'disabled':''}>→</button></div>`}
+function bindPager(k){document.querySelectorAll('.pager button').forEach(b=>b.onclick=()=>{S[k]+=+b.dataset.p;render()})}
+
+function newClient(){
+  modal('Новый клиент',`<form class="f" id="cf"><div><label>Имя</label><input name="firstName" required></div><div><label>Фамилия</label><input name="lastName" required></div>
+  <div><label>Email</label><input name="email" type="email"></div><div><label>Телефон</label><input name="phone"></div>
+  <div class="w acts"><button type="button" class="ghost" onclick="closeM()">Отмена</button><button class="btn">Создать</button></div></form>`);
+  $('#cf').onsubmit=e=>{e.preventDefault();run(async()=>{await api('/clients',{m:'POST',b:fd(e.target)});closeM();toast('Клиент создан');render()})};
+}
+
+async function clientCard(c){
+  if(c.id===undefined)return toast('У клиента нет id — добавьте его в ClientResponse',1);
+  modal(`${c.firstName} ${c.lastName}`,`<form class="f" id="cf">
+   <div><label>Имя</label><input name="firstName" value="${esc(c.firstName)}"></div><div><label>Фамилия</label><input name="lastName" value="${esc(c.lastName)}"></div>
+   <div><label>Email</label><input name="email" value="${esc(c.email)}"></div><div><label>Телефон</label><input name="phone" value="${esc(c.phone)}"></div>
+   <div><label>Статус</label><select name="status">${opts(CS,c.status)}</select></div><div><label>Email менеджера</label><input name="managerEmail" value="${esc(c.emailLinkedManager)}"></div>
+   <div class="w acts"><button type="button" class="ghost danger" id="del">Удалить</button><button class="btn">Сохранить</button></div></form>
+   <h2>Финансы</h2><div id="cfin" class="sub">Загрузка…</div>
+   <h2>Заметки</h2><div id="cn"></div><textarea id="nt" rows="3" placeholder="Ваша заметка (одна на клиента)"></textarea><div class="acts"><button class="ghost danger" id="nd" style="display:none">Удалить</button><button class="btn" id="ns">Сохранить заметку</button></div>`);
+  $('#cf').onsubmit=e=>{e.preventDefault();run(async()=>{await api('/clients/'+c.id,{m:'PUT',b:fd(e.target)});closeM();toast('Сохранено');render()})};
+  $('#del').onclick=()=>confirm('Удалить клиента?')&&run(async()=>{await api('/clients/'+c.id,{m:'DELETE'});closeM();toast('Удалён');render()});
+  run(async()=>{
+    const [s,t]=await Promise.all([api(`/finance/${c.id}/summary`),api(`/finance/${c.id}?size=5&sortBy=id&direction=desc`)]);
+    $('#cfin').className='';$('#cfin').innerHTML=`<div class="grid"><div class="card stat"><small>Баланс</small><b>${money(s.balance)}</b></div><div class="card stat"><small>Доход / Расход</small><b style="font-size:16px">${money(s.totalIncome)} / ${money(s.totalExpense)}</b></div></div>
+     <div style="margin:10px 0">${t.content.map(x=>`<div>${dt(x.createdAt)} · <span class="${x.type=='INCOME'?'inc':'exp'}">${money(x.amount)}</span> · ${TS[x.status]} · ${esc(x.description)}</div>`).join('')}</div><button class="ghost sm" id="at">+ Операция</button>`;
+    $('#at').onclick=()=>txModal(c.id);
+  });
+  const loadN=()=>run(async()=>{
+    const ns=await api(`/clients/${c.id}/notes`),mine=ns.find(n=>n.ownerEmail===me());
+    $('#cn').innerHTML=ns.map(n=>`<div class="note">${esc(n.text)}<br><small>${esc(n.ownerEmail)}</small></div>`).join('')||'<p class="sub">Заметок нет</p>';
+    $('#nt').value=mine?.text||'';$('#nd').style.display=mine?.id!==undefined?'':'none';
+    $('#ns').onclick=()=>run(async()=>{await api(`/clients/${c.id}/notes`,{m:mine?'PUT':'POST',b:{text:$('#nt').value}});toast('Заметка сохранена');loadN()});
+    $('#nd').onclick=()=>run(async()=>{await api(`/clients/${c.id}/notes/${mine.id}`,{m:'DELETE'});loadN()});
+  });loadN();
+}
+
+/* ---------- finance ---------- */
+async function fin(){
+  const d=await api(`/finance?page=${S.fp}&size=10&sortBy=id&direction=desc`);
+  $('#main').innerHTML=`<div class="bar"><h1>Финансы</h1><div class="sp"></div><button class="btn" id="nt">+ Операция</button></div>
+  <table><thead><tr><th>Дата</th><th>Клиент</th><th>Сумма</th><th>Статус</th><th>Описание</th><th>Автор</th><th></th></tr></thead><tbody>
+  ${d.content.map((t,i)=>`<tr><td>${dt(t.createdAt)}</td><td>${esc(t.clientFName)} ${esc(t.clientLName)}</td><td class="${t.type=='INCOME'?'inc':'exp'}">${t.type=='INCOME'?'+':'−'}${money(t.amount)}</td><td><span class="badge">${TS[t.status]}</span></td><td>${esc(t.description)}</td><td>${esc(t.createdByUsername)}</td>
+  <td style="white-space:nowrap"><button class="ghost sm" data-e="${i}">✎</button> <button class="ghost sm danger" data-d="${i}">✕</button></td></tr>`).join('')||`<tr><td colspan=7 class="empty">Операций нет</td></tr>`}</tbody></table>${pager(d)}`;
+  $('#nt').onclick=()=>txModal();bindPager('fp');
+  document.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>txModal(null,d.content[b.dataset.e]));
+  document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{const t=d.content[b.dataset.d];confirm('Удалить операцию?')&&run(async()=>{await api(`/finance/${t.clientId}/transaction/${t.transactionId}`,{m:'DELETE'});render()})});
+}
+async function txModal(cid,t){
+  let sel='';
+  if(!cid&&!t){const cl=(await api('/clients?size=200')).content;sel=`<div class="w"><label>Клиент</label><select name="cid">${cl.map(c=>`<option value="${c.id}">${esc(c.firstName)} ${esc(c.lastName)}</option>`).join('')}</select></div>`}
+  modal(t?'Редактировать операцию':'Новая операция',`<form class="f" id="tf">${sel}<div><label>Сумма</label><input name="amount" type="number" step="0.01" min="0" required value="${t?t.amount:''}"></div>
+  <div><label>Тип</label><select name="type">${opts({INCOME:'Доход',EXPENSE:'Расход'},t?.type)}</select></div><div><label>Статус</label><select name="status">${opts(TS,t?.status||'COMPLETED')}</select></div>
+  <div><label>Описание</label><input name="description" value="${esc(t?.description)}"></div>
+  <div class="w acts"><button type="button" class="ghost" onclick="closeM()">Отмена</button><button class="btn">Сохранить</button></div></form>`);
+  $('#tf').onsubmit=e=>{e.preventDefault();const v=fd(e.target),id=t?t.clientId:cid||v.cid;
+    run(async()=>{await api(t?`/finance/${id}/transaction/${t.transactionId}`:`/finance/${id}`,{m:t?'PUT':'POST',b:{amount:+v.amount,type:v.type,status:v.status,description:v.description}});closeM();toast('Сохранено');render()})};
+}
+
+/* ---------- my notes ---------- */
+async function notes(){
+  const ns=await api('/notes/my');
+  $('#main').innerHTML=`<h1>Мои заметки</h1><p class="sub">Все заметки, которые оставили вы</p>${ns.map(n=>`<div class="note"><b>${esc(n.fullNameClient)}</b><br>${esc(n.text)}</div>`).join('')||'<div class="empty">Заметок пока нет</div>'}`;
+}
+boot();
+</script>
+</body>
+</html>
